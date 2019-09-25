@@ -1,0 +1,21 @@
+---
+#Configure Docker Registry Images
+
+- name: Download docker image nginx
+  become: true
+  docker_image:
+    name: "{{ item }}"
+  loop:
+    - nginx
+
+  tags:
+    - configure-bastion_host
+
+- name: Tag and push to local registry nginx
+  docker_image:
+     name: nginx
+     repository: "{{ docker_registry_url }}/nginx"
+     tag: latest
+     push: yes
+  tags:
+    - configure-bastion_host

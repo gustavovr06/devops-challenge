@@ -1,0 +1,46 @@
+---
+#Install Kibana
+
+- name: Download RPM
+  get_url:
+    url:  http://bastion_host1.{{ internal_subdomain }}:{{ bastion_host_nexus_port }}/repository/eva-tech/rpms/kibana-6.6.0-x86_64.rpm
+    dest: /tmp/
+    mode: 0755
+  retries: 5
+  delay: 5
+  tags:
+  - configure_monitoring
+
+- name: Install RPM Elasticsearch files
+  yum:
+    name: /tmp/kibana-6.6.0-x86_64.rpm
+    state: present
+  tags:
+  - configure_monitoring
+
+- name: Start Kibana
+  service:
+   name: kibana
+   enabled: yes
+   state: started
+  ignore_errors: no
+  tags:
+    - configure_monitoring
+
+- name: Configure Kibana
+  template:
+    src: kibana.yml.j2
+    dest: /etc/kibana/kibana.yml
+  tags:
+    - configure_monitoring
+
+- name: Restart Kibana
+  service:
+   name: kibana
+   enabled: yes
+   state: restarted
+  ignore_errors: no
+  tags:
+    - configure_monitoring
+
+

@@ -1,0 +1,3 @@
+---
+java_archive_name: java8.rpm
+nexus_repository_url: https://download.sonatype.com/nexus/3/latest-unix.tar.gz

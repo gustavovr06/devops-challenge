@@ -1,0 +1,24 @@
+---
+agent_list:
+{% for host in hostvars[inventory_hostname]['groups']['Jenkinss'] %}
+- {{ hostvars[host].ansible_default_ipv4.address }}
+{% endfor %}
+{% for host in hostvars[inventory_hostname]['groups']['Public_Agents'] %}
+- {{ hostvars[host].ansible_default_ipv4.address }}
+{% endfor %}
+bastion_host_url: http://bastion_host1.{{ internal_subdomain }}:{{ bastion_host_port_webserver }}
+cluster_name: {{ cluster_name }}
+log_directory: /genconf/logs
+exhibitor_storage_backend: static
+master_discovery: static
+ip_detect_public_filename: /genconf/ip-detect
+master_list:
+{% for host in hostvars[inventory_hostname]['groups']['Masters'] %}
+- {{ hostvars[host].ansible_default_ipv4.address }}
+{% endfor %}
+process_timeout: 120
+resolvers:
+- {{ bastion_host_ip_webserver }}
+ssh_key_path: /genconf/eva
+ssh_port: '22'
+ssh_user: centos

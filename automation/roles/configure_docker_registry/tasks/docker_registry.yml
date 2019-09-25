@@ -1,0 +1,28 @@
+---
+# tasks file for roles/configure-bastion_host/docker-registry
+
+- name: Install Docker Distribution
+  yum:
+    name: "docker-distribution"
+    state: latest
+  tags:
+    - configure-bastion_host
+
+- name: Configure Docker Distribution
+  template:
+    src: config_docker_distribution.yml.j2
+    dest: /etc/docker-distribution/registry/config.yml
+    owner: root
+    group: named
+    mode: 0640
+  tags:
+    - configure-bastion_host
+
+- name: Start Docker Distribution
+  service:
+    name: docker-distribution
+    enabled: yes
+    state: started
+  tags:
+    - configure-bastion_host
+

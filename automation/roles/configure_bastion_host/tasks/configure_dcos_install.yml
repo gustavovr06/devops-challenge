@@ -1,0 +1,48 @@
+- name: Create folder bastion_host
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+  - /genconf
+  - /genconf/logs
+  tags:
+  - configure-bastion_host
+
+- name: Copy ip-detect script
+  copy:
+    src: ip-detect
+    dest: /genconf/ip-detect
+    owner: root
+    group: root
+    mode: 0640
+  tags:
+  - configure-bastion_host
+
+- name: Copy fault-detection script
+  copy:
+    src: cloud.sh
+    dest: /genconf/cloud.sh
+    owner: root
+    group: root
+    mode: 0640
+  tags:
+  - configure-bastion_host
+
+- name: Copy ssh key
+  copy:
+    src: "{{ ssh_key }}"
+    dest: /genconf/eva
+    owner: root
+    group: root
+    mode: 0400
+  tags:
+  - configure-bastion_host
+
+- name: Docker Login for use bastion_host
+  docker_login:
+    registry: bastion_host1.{{ internal_subdomain }}:{{ docker_port }}
+    username: "{{ docker_login_user }}"
+    password: "{{ docker_login_password }}"
+  tags:
+  - configure-bastion_host

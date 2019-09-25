@@ -1,0 +1,6 @@
+---
+# tasks file for roles/configure-bastion_host
+- name: Copy Operations tools
+  import_tasks: operations.yml
+  tags:
+    - configure-bastion_host

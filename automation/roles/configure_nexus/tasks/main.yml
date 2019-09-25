@@ -1,0 +1,176 @@
+---
+
+- name: Check was run and finnish ok
+  stat:
+    path: /etc/systemd/system/nexus.service
+  register: stat_result
+  tags:
+  - configure_nexus
+
+- name: install system utilities
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+  - wget
+  - unzip
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Download configurations Files tar
+  get_url:
+    url:  http://{{ eva-tech_repository_url }}:{{ eva-tech_repository_port }}/repository/eva-tech-raw/tars/nexus_backup.tar.gz
+    dest: /tmp/
+    mode: 0755
+  async: 1000
+  poll: 0
+  register: task_sleeper
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Install Java JDK
+  yum:
+    name: http://{{ eva-tech_repository_url }}:{{ eva-tech_repository_port }}/repository/eva-tech/rpms/jdk-8u191-linux-x64.rpm
+    state: present
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Get Nexus Repositry OSS
+  get_url:
+    url: "{{ nexus_repository_url }}"
+    dest: /opt/latest-unix.tar.gz
+    mode: 0755
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Unarchive Nexus Repository OSS
+  unarchive:
+    src: /opt/latest-unix.tar.gz
+    dest: /opt/
+    remote_src: yes
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Create symbolic link for nexus
+  file:
+    src: /opt/nexus-3.15.2-01
+    dest: /opt/nexus
+    state: link
+    force: yes
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Add the user 'nexus'
+  user:
+    name: nexus
+    comment: Nexus user
+    group: root
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Change owner
+  file:
+    path: "{{ item }}"
+    owner: nexus
+    group: root
+    recurse: yes
+  when: stat_result.stat.exists == False
+  loop:
+  - /opt/nexus-3.15.2-01
+  - /opt/sonatype-work
+  tags:
+  - configure_nexus
+
+- name: Change owner nexus Link
+  file:
+    path: "{{ item }}"
+    owner: nexus
+    group: root
+  loop:
+  - /opt/nexus
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Add run user
+  lineinfile:
+    dest: /opt/nexus/bin/nexus.rc
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+  - { regexp: '^# run_as_user="" ', line: '# run_as_user="nexus"' }
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Copy nexus service
+  copy:
+    src: nexus.service
+    dest: /etc/systemd/system/nexus.service
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Start service nexus
+  systemd:
+    state: started
+    daemon_reload: yes
+    name: nexus
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Stop service nexus
+  systemd:
+    state: stopped
+    name: nexus
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Check if nexus files is dowloaded
+  async_status:
+    jid: "{{ task_sleeper.ansible_job_id }}"
+  register: job_result
+  until: job_result.finished
+  retries: 30
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Copy configurations Files
+  unarchive:
+    src: /tmp/nexus_backup.tar.gz
+    dest: /opt/sonatype-work/
+    remote_src: yes
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Change owner after copy configurations Files
+  file:
+    path: "{{ item }}"
+    owner: nexus
+    group: root
+    recurse: yes
+  loop:
+  - /opt/nexus-3.15.2-01
+  - /opt/sonatype-work
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus
+
+- name: Start service nexus
+  systemd:
+    state: started
+    name: nexus
+  when: stat_result.stat.exists == False
+  tags:
+  - configure_nexus

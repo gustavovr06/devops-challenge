@@ -1,0 +1,25 @@
+---
+# File: group_vars/work
+
+repository_url: "dockeregistry.eva-tech.com"
+eva-tech_repository_port: "8081"
+bastion_host_nexus_port: "8081"
+bastion_host_ip_webserver: "172.17.77.100"
+bastion_host_port_webserver: "80"
+bastion_host_port_webserver: "8080"
+
+network_cidr: "172.17.0.0/16"
+
+cluster_name: work.eva
+internal_subdomain: work.eva.local
+bind_zone_name: "work.eva.local"
+bind_zone_ext: "local.eva.work"
+default_dns_1: "8.8.8.8"
+default_dns_2: "8.4.4.4"
+timezone: "America/Mexico_City"
+resolvconf_servers_bastion_host: ["8.8.8.8", "8.8.4.4"]
+resolvconf_servers: ["172.17.77.100"]
+resolvconf_timeout: 2
+resolvconf_attempts: 1
+ssh_key: "../../../keys/eva-eva-tech-work"
+docker_port: 8083
