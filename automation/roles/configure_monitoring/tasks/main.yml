@@ -1,0 +1,27 @@
+---
+# Main task for configure monitoring with ELK
+
+- name: Install Java
+  yum:
+    name: http://bastion_host1.{{ internal_subdomain }}:{{ bastion_host_nexus_port }}/repository/eva-tech/rpms/jdk-8u191-linux-x64.rpm
+    state: present
+  tags:
+    - configure_monitoring
+
+- name: Configure Elasticsearch
+  import_tasks: elasticsearch.yml
+  when: "'Elasticsearch' in group_names"
+  tags:
+    - configure_monitoring
+
+- name: Configure Kibana
+  import_tasks: kibana.yml
+  when: "'Kibana' in group_names"
+  tags:
+    - configure_monitoring
+
+- name: Configure Logstash
+  import_tasks: logstash.yml
+  when: "'Logstash' in group_names"
+  tags:
+    - configure_monitoring

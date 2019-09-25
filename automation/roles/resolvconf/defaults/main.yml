@@ -1,0 +1,6 @@
+---
+# File: roles/resolvconf/defaults/main.yml
+resolvconf_servers_bastion_host: ["8.8.8.8", "8.8.4.4"]
+resolvconf_servers: ["172.17.77.100"]
+resolvconf_timeout: 2
+resolvconf_attempts: 1

@@ -1,0 +1,80 @@
+---
+#Install Elasticsearch
+- name: Java environment
+  copy:
+    src: java_profile.sh
+    dest: /etc/profile.d/java_profile.sh
+  tags:
+    - configure_monitoring
+
+- name: Download RPM
+  get_url:
+    url:  http://bastion_host1.{{ internal_subdomain }}:{{ bastion_host_nexus_port }}/repository/eva-tech/rpms/elasticsearch-6.6.0.rpm
+    dest: /tmp/
+    mode: 0755
+  retries: 5
+  delay: 5
+  tags:
+  - configure_monitoring
+
+- name: Install RPM Elasticsearch files
+  yum:
+    name: /tmp/elasticsearch-6.6.0.rpm
+    state: present
+  tags:
+    - configure_monitoring
+
+- name: Start Elasticsearch
+  service:
+   name: elasticsearch
+   enabled: yes
+   state: started
+  ignore_errors: no
+  tags:
+    - configure_monitoring
+
+- name: Configure Elasticsearch
+  template:
+    src: elasticsearch.yml.j2
+    dest: /etc/elasticsearch/elasticsearch.yml
+  tags:
+    - configure_monitoring
+
+- name: Copy elastcisearch file
+  copy:
+    src: elasticsearch
+    dest: /etc/sysconfig/elasticsearch
+  tags:
+    - configure_monitoring
+
+- name: Configure elasticsearch.service
+  lineinfile:
+    dest: /usr/lib/systemd/system/elasticsearch.service
+    insertbefore: "{{ item.insertbefore}}"
+    line: "{{ item.line }}"
+  with_items:
+    - { insertbefore: '\[Install\]', line: 'LimitMEMLOCK=infinity' }
+  tags:
+    - configure_monitoring
+
+- name: Configure JVM heap size
+  copy:
+    src: jvm.options
+    dest: /etc/elasticsearch/jvm.options
+  tags:
+    - configure_monitoring
+
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  ignore_errors: no
+  tags:
+    - configure_monitoring
+
+- name: Restart Elasticsearch
+  service:
+   name: elasticsearch
+   enabled: yes
+   state: restarted
+  ignore_errors: no
+  tags:
+    - configure_monitoring

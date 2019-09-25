@@ -1,0 +1,26 @@
+Host * !54.183.92.167
+User centos
+IdentityFile ./keys/eva-eva-tech-work
+ServerAliveInterval 60
+TCPKeepAlive yes
+ProxyCommand ssh -i ./keys/eva-eva-tech-work -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -W %h:%p centos@54.183.92.167 -p 2225
+LogLevel QUIET
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+
+Host 54.183.92.167
+Hostname 54.183.92.167
+User centos
+Port 2225
+IdentityFile ./keys/eva-eva-tech-work
+PasswordAuthentication no
+ForwardAgent yes
+ServerAliveInterval 60
+TCPKeepAlive yes
+ControlMaster auto
+ControlPersist 15m
+ProxyCommand none
+LogLevel QUIET
+StrictHostKeyChecking no
+UserKnownHostsFile /dev/null
+

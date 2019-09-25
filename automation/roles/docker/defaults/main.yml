@@ -1,0 +1,10 @@
+---
+# File: roles/docker/defaults/main.yml
+docker_version: 18.06.1.ce
+#docker_version: 1.12.6-1
+#docker_registry_url: ""
+#docker_registry_user: ""
+#docker_registry_pass: ""
+#docker_registry_email: ""
+#docker_authentication: {}
+tmp_dir: "/tmp/eva-tech/"

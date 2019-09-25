@@ -1,0 +1,5 @@
+---
+# defaults file for roles/configure-bastion_host
+path_bastion_host: "/"
+port_webserver: "8080"
+docker_registry_url: "bastion_host1.{{ internal_subdomain }}:5000"

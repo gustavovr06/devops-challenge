@@ -1,0 +1,4 @@
+#!/bin/sh
+docker pull jmoyad/dshub:$1
+docker tag jmoyad/dshub:$1 {{ internal_subdomain }}:5000/dshub:$1
+docker push {{ internal_subdomain }}:5000/dshub:$1

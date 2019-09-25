@@ -1,0 +1,22 @@
+---
+# File: roles/resolvconf/tasks/main.yml
+
+- name: Configure bastion_host resolv.conf
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - resolvconf
+
+- name: Configure All resolv.conf
+  template:
+    src: resolv2.conf.j2
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - resolvconf

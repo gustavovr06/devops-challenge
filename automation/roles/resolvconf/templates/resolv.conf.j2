@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+options timeout:{{ resolvconf_timeout }} attempts:{{ resolvconf_attempts }} rotate
+domain {{ internal_subdomain }}
+{% for dns in resolvconf_servers_bastion_host %}
+nameserver {{ dns }}
+{% endfor %}

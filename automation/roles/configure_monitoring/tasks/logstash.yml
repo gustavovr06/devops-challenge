@@ -1,0 +1,49 @@
+---
+#Install Logstash
+
+- name: Download RPM
+  get_url:
+    url:  http://bastion_host1.{{ internal_subdomain }}:{{ bastion_host_nexus_port }}/repository/eva-tech/rpms/logstash-6.6.0.rpm
+    dest: /tmp/
+    mode: 0755
+  retries: 5
+  delay: 5
+  tags:
+  - configure_monitoring
+
+- name: Install RPM Elasticsearch files
+  yum:
+    name: /tmp/logstash-6.6.0.rpm
+    state: present
+  tags:
+  - configure_monitoring
+ 
+- name: Configure input file
+  copy:
+    src: 02-beats-input.conf
+    dest: /etc/logstash/conf.d/
+  tags:
+    - configure_monitoring
+
+- name: Configure filterlogs
+  copy:
+    src: 10-syslog-filter.conf
+    dest: /etc/logstash/conf.d/
+  tags:
+    - configure_monitoring
+    
+- name: Configure output logs
+  template:
+    src: 30-elasticsearch-output.conf.j2
+    dest: /etc/logstash/conf.d/30-elasticsearch-output.conf
+  tags:
+    - configure_monitoring
+
+- name: Start Logstash
+  service:
+   name: logstash
+   enabled: yes
+   state: started
+  ignore_errors: no
+  tags:
+    - configure_monitoring

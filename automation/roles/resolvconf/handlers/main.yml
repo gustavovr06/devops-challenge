@@ -1,0 +1,6 @@
+---
+# File: roles/resolvconf/handlers/main.yml
+
+- name: restart networkmanager
+  service: name=NetworkManager state=restarted
+

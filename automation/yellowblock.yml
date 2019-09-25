@@ -1,0 +1,73 @@
+---
+
+#########################
+# All Check Ping        #
+#########################
+- hosts:
+    - all
+  become: yes
+  become_user: root
+  serial: 25
+  tasks:
+  - name: Check if all host is UP
+    ping:
+    retries: 10
+
+####################
+# bastion_host Defautl#
+####################
+
+- hosts:
+  - bastion_host
+  serial: 1
+  become: true
+  roles:
+  - docker
+  - configure_nexus
+  - dns
+  - resolvconf
+
+
+#######
+# All #
+#######
+
+- hosts:
+  - Jenkinss
+  - Logstash
+  - Kibana
+  - Elasticsearch
+  serial: 50
+  become: true
+  gather_facts: no
+  strategy: free
+  roles:
+  - resolvconf
+  - docker
+
+
+##################
+# Bastion_host #
+##################
+
+- hosts:
+  - bastion_host
+  serial: 1
+  become: true
+  roles:
+  - configure_bastion_host
+
+
+#############################
+# Monitoring Server Install #
+#############################
+
+- hosts:
+  - Logstash
+  - Kibana
+  - Elasticsearch
+  serial: 20
+  become: true
+  become_user: root
+  roles:
+  - configure_monitoring

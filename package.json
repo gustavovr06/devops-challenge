@@ -1,0 +1,13 @@
+{
+  "name": "devops-challenge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "chance": "1.0.18",
+    "fastify": "2.7.1"
+  }
+}

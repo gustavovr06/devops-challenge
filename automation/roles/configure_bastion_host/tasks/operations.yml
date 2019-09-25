@@ -1,0 +1,30 @@
+---
+- name: Create folder Operations
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - /operations
+  tags:
+    - configure-bastion_host
+
+- name: Copy operations tools
+  template:
+    src: download.sh.j2
+    dest: /operations/download.sh
+    owner: root
+    group: named
+    mode: 0755
+  tags:
+    - configure-bastion_host
+
+- name: Copy Script for Dshub Ha Proxy
+  copy:
+    src: dshub-haproxy.sh
+    dest: /tmp/dshub-haproxy.sh
+    owner: root
+    group: named
+    mode: 0755
+  tags:
+    - configure-bastion_host

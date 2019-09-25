@@ -1,0 +1,11 @@
+---
+# tasks file for roles/configure-bastion_host
+- name: Configure Docker Registry
+  import_tasks: docker_registry.yml
+  tags:
+  - configure-docker-registry
+
+- name: Configure Docker Images
+  import_tasks: configure_docker_images.yml
+  tags:
+  - configure-docker-registry

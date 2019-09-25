@@ -1,0 +1,21 @@
+---
+# File: roles/docker/handlers/main.yml
+
+#- name: Restart docker-engine (RHEL 7.2)
+#  listen: restart docker
+#  service:
+#    name: docker-engine
+#    state: restarted
+#  when: ansible_distribution == 'RedHat' and ansible_distribution_version == '7.2'
+
+#- name: Restart docker
+#  listen: restart docker
+#  service:
+#    name: docker
+#    state: restarted
+#  when: ansible_distribution == 'RedHat' and ansible_distribution_version|version_compare('7.3', '>=')
+- name: restart docker
+  systemd:
+    name: docker
+    state: restarted
+    daemon_reload: yes
